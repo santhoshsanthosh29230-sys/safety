@@ -1,0 +1,11 @@
+# Safety Surveillance - Industrial PPE Detection Platform
+# Production Dependencies
+ultralytics>=8.1.0
+torch>=2.0.0
+torchvision>=0.15.0
+opencv-python-headless>=4.8.0
+numpy>=1.24.0
+pillow>=10.0.0
+psutil>=5.9.0
+PyYAML>=6.0
+requests>=2.31.0

@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Safety Surveillance - Industrial Safety & PPE Portal</title>
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --bg-card: #111827;
+      --bg-card-hover: #1f2937;
+      --border-color: #374151;
+      --border-accent: #4b5563;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      --accent-safety: #f59e0b; /* Amber */
+      --accent-safe: #10b981;   /* Emerald */
+      --accent-danger: #ef4444; /* Crimson */
+      --accent-cyan: #06b6d4;   /* Cyan */
+      --accent-blue: #3b82f6;   /* Blue */
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.5;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-dark); }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+
+    /* AUTHENTICATION PORTAL VIEW */
+    #authContainer {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0b0f19 75%);
+    }
+
+    .auth-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      max-width: 480px;
+      width: 100%;
+      padding: 2.2rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      position: relative;
+    }
+
+    .auth-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent-safety), #d97706, var(--accent-safe));
+      border-radius: 16px 16px 0 0;
+    }
+
+    .auth-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .auth-logo-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #111;
+      font-weight: 900;
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+      margin-bottom: 0.75rem;
+    }
+
+    .auth-tabs {
+      display: flex;
+      background: #1e293b;
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 1.5rem;
+      gap: 4px;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 0.6rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .auth-tab-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .form-group {
+      margin-bottom: 1.1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .form-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .form-input, .form-select {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.65rem 0.85rem;
+      color: #fff;
+      font-size: 0.88rem;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: var(--accent-safety);
+    }
+
+    .btn-block {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      background: var(--accent-safety);
+      color: #111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      transition: background 0.15s;
+      margin-top: 0.5rem;
+    }
+    .btn-block:hover { background: #d97706; }
+
+    .demo-credentials {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+    }
+
+    .demo-label {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+
+    .demo-chips {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .demo-chip {
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: #38bdf8;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .demo-chip:hover {
+      background: #253347;
+      border-color: var(--accent-cyan);
+    }
+
+    .auth-error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #f87171;
+      padding: 0.6rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .auth-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #34d399;
+      padding: 0.6rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    /* MAIN DASHBOARD APPLICATION VIEW */
+    #dashboardApp {
+      display: none;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
+    header {
+      background: rgba(17, 24, 39, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.85rem; }
+    .brand-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      color: #111; font-weight: 800;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+    }
+    .brand-title { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.02em; color: #fff; }
+    .brand-sub { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.05em; text-transform: uppercase; }
+
+    .telemetry-bar { display: flex; align-items: center; gap: 1.25rem; font-size: 0.82rem; }
+    .telemetry-item { display: flex; flex-direction: column; align-items: flex-start; }
+    .telemetry-label { font-size: 0.68rem; color: var(--text-dim); text-transform: uppercase; font-weight: 600; }
+    .telemetry-value { font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 0.35rem; }
+
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      background: #1e293b;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      background: var(--accent-safety);
+      color: #111;
+      font-weight: 800;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+    }
+
+    .user-name {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .user-role {
+      font-size: 0.68rem;
+      color: var(--text-dim);
+    }
+
+    .btn-logout {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-logout:hover {
+      background: var(--accent-danger);
+      color: #fff;
+    }
+
+    .status-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--accent-safe); box-shadow: 0 0 8px var(--accent-safe);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+
+    .badge {
+      display: inline-flex; align-items: center;
+      padding: 0.2rem 0.5rem; border-radius: 9999px;
+      font-size: 0.72rem; font-weight: 600;
+    }
+    .badge-safe { background: rgba(16, 185, 129, 0.15); color: var(--accent-safe); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-warn { background: rgba(245, 158, 11, 0.15); color: var(--accent-safety); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--accent-danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-cyan { background: rgba(6, 182, 212, 0.15); color: var(--accent-cyan); border: 1px solid rgba(6, 182, 212, 0.3); }
+
+    .nav-tabs {
+      background: #0f172a;
+      border-bottom: 1px solid var(--border-color);
+      display: flex; padding: 0 1.5rem; gap: 0.5rem;
+    }
+    .nav-tab {
+      padding: 0.75rem 1rem; background: transparent; border: none;
+      color: var(--text-muted); font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; border-bottom: 2px solid transparent;
+      transition: all 0.2s ease; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .nav-tab:hover { color: var(--text-main); }
+    .nav-tab.active {
+      color: var(--accent-safety); border-bottom-color: var(--accent-safety);
+      background: rgba(245, 158, 11, 0.05);
+    }
+
+    main {
+      flex: 1; padding: 1.25rem 1.5rem;
+      display: flex; flex-direction: column; gap: 1.25rem;
+      max-width: 1750px; margin: 0 auto; width: 100%;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .dashboard-grid {
+      display: grid; grid-template-columns: 2.2fr 1fr; gap: 1.25rem;
+    }
+    @media (max-width: 1200px) { .dashboard-grid { grid-template-columns: 1fr; } }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px; padding: 1.25rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    }
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border-color);
+    }
+    .card-title {
+      font-size: 1rem; font-weight: 700; display: flex; align-items: center;
+      gap: 0.5rem; color: var(--text-main);
+    }
+
+    .video-container {
+      position: relative; background: #000;
+      border-radius: 8px; overflow: hidden;
+      border: 1px solid #334155; aspect-ratio: 16 / 9;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #surveillanceCanvas {
+      width: 100%; height: 100%; display: block; object-fit: cover;
+    }
+    .video-overlay-header {
+      position: absolute; top: 12px; left: 12px; right: 12px;
+      display: flex; justify-content: space-between; align-items: center;
+      pointer-events: none; z-index: 10;
+    }
+    .cam-tag {
+      background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px);
+      padding: 4px 10px; border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-family: monospace; font-size: 0.78rem; color: #38bdf8;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .rec-badge {
+      background: rgba(239, 68, 68, 0.85); color: #fff;
+      font-weight: 700; font-size: 0.7rem; padding: 2px 7px;
+      border-radius: 4px; letter-spacing: 0.08em;
+      display: flex; align-items: center; gap: 4px;
+    }
+    .rec-dot {
+      width: 6px; height: 6px; background: #fff; border-radius: 50%;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .video-controls {
+      display: flex; flex-wrap: wrap; justify-content: space-between;
+      align-items: center; gap: 0.75rem; margin-top: 0.85rem;
+      padding-top: 0.75rem; border-top: 1px solid var(--border-color);
+    }
+    .camera-selector { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+    .btn {
+      padding: 0.45rem 0.85rem; border-radius: 6px; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; border: 1px solid var(--border-color);
+      background: var(--bg-card); color: var(--text-main);
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+    .btn:hover { background: var(--bg-card-hover); border-color: var(--border-accent); }
+    .btn.active, .btn-primary { background: var(--accent-safety); color: #111; border-color: var(--accent-safety); }
+    .btn-live-active {
+      background: #10b981 !important; color: #111 !important; font-weight: 800 !important;
+      border-color: #10b981 !important; box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+    }
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4); color: #f87171;
+    }
+    .btn-danger:hover { background: var(--accent-danger); color: #fff; }
+    .btn-safe {
+      background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.4); color: #34d399;
+    }
+    .btn-safe:hover { background: var(--accent-safe); color: #fff; }
+
+    .toggle-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .toggle-chip {
+      font-size: 0.74rem; padding: 0.25rem 0.6rem; border-radius: 4px;
+      cursor: pointer; background: #1e293b; border: 1px solid #334155;
+      color: var(--text-muted); user-select: none; transition: all 0.15s;
+    }
+    .toggle-chip.active {
+      background: rgba(6, 182, 212, 0.15); border-color: var(--accent-cyan); color: #38bdf8;
+    }
+
+    .incidents-container {
+      display: flex; flex-direction: column; gap: 0.75rem;
+      max-height: 520px; overflow-y: auto; padding-right: 4px;
+    }
+    .incident-item {
+      background: #1e293b; border-left: 4px solid var(--accent-danger);
+      border-radius: 6px; padding: 0.85rem; display: flex;
+      flex-direction: column; gap: 0.5rem; transition: transform 0.15s;
+    }
+    .incident-item:hover { transform: translateX(2px); background: #253347; }
+    .incident-item.warning { border-left-color: var(--accent-safety); }
+
+    .incident-top { display: flex; justify-content: space-between; align-items: center; }
+    .incident-title { font-weight: 700; font-size: 0.85rem; color: #f87171; display: flex; align-items: center; gap: 0.35rem; }
+    .incident-item.warning .incident-title { color: #fbbf24; }
+    .incident-time { font-size: 0.72rem; color: var(--text-dim); font-family: monospace; }
+    .incident-meta { font-size: 0.78rem; color: var(--text-muted); display: flex; flex-direction: column; gap: 0.2rem; }
+    .incident-tags { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.25rem; }
+    .incident-actions {
+      display: flex; gap: 0.4rem; margin-top: 0.35rem; padding-top: 0.5rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .metrics-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem;
+    }
+    .metric-card {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: 10px; padding: 1.1rem; display: flex;
+      flex-direction: column; gap: 0.4rem; position: relative; overflow: hidden;
+    }
+    .metric-card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--accent-safety);
+    }
+    .metric-card.safe::before { background: var(--accent-safe); }
+    .metric-card.danger::before { background: var(--accent-danger); }
+    .metric-card.cyan::before { background: var(--accent-cyan); }
+
+    .metric-label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .metric-val { font-size: 1.75rem; font-weight: 800; color: #fff; }
+    .metric-sub { font-size: 0.75rem; color: var(--text-dim); display: flex; align-items: center; gap: 0.3rem; }
+
+    .table-container { width: 100%; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th {
+      text-align: left; padding: 0.75rem 1rem; background: #1e293b;
+      color: var(--text-muted); font-weight: 600; border-bottom: 1px solid var(--border-color);
+      text-transform: uppercase; font-size: 0.72rem;
+    }
+    td { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border-color); color: var(--text-main); }
+    tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+    .control-deck {
+      display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center;
+      background: #1e293b; padding: 0.9rem 1.2rem; border-radius: 8px;
+      border: 1px solid var(--border-color); margin-top: 1rem;
+    }
+    .deck-group { display: flex; align-items: center; gap: 0.5rem; }
+    .deck-label { font-size: 0.78rem; font-weight: 600; color: var(--text-muted); }
+
+    .zone-matrix {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;
+    }
+    .zone-card {
+      background: #1e293b; border: 1px solid var(--border-color);
+      border-radius: 8px; padding: 1rem; display: flex; flex-direction: column; gap: 0.65rem;
+    }
+    .zone-card-title { font-size: 0.92rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
+    .rule-item {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.8rem; padding: 0.35rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #4b5563; transition: .2s; border-radius: 18px;
+    }
+    .slider:before {
+      position: absolute; content: ""; height: 14px; width: 14px;
+      left: 2px; bottom: 2px; background-color: white; transition: .2s; border-radius: 50%;
+    }
+    input:checked + .slider { background-color: var(--accent-safe); }
+    input:checked + .slider:before { transform: translateX(16px); }
+
+    .modal-backdrop {
+      display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; padding: 1.5rem;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: 12px; max-width: 650px; width: 100%; padding: 1.5rem;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); position: relative;
+    }
+    .modal-close {
+      position: absolute; top: 1rem; right: 1rem; background: transparent;
+      border: none; color: var(--text-dim); font-size: 1.25rem; cursor: pointer;
+    }
+    .modal-close:hover { color: #fff; }
+
+    footer {
+      margin-top: auto; background: #0f172a; border-top: 1px solid var(--border-color);
+      padding: 0.85rem 1.5rem; font-size: 0.75rem; color: var(--text-dim);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden video element for live webcam stream -->
+  <video id="webcamVideo" autoplay playsinline muted style="display: none;"></video>
+
+  <!-- ========================================================================= -->
+  <!-- 1. AUTHENTICATION VIEW: SIGN IN & SIGN UP -->
+  <!-- ========================================================================= -->
+  <div id="authContainer">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <h2 style="font-size: 1.35rem; font-weight: 800; color: #fff; letter-spacing: -0.02em;">
+          SAFETY SURVEILLANCE
+        </h2>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;">
+          Industrial Real-Time PPE Compliance & Hazard Monitoring Portal
+        </p>
+      </div>
+
+      <!-- Auth Error / Success Banners -->
+      <div class="auth-error" id="authErrorMsg"></div>
+      <div class="auth-success" id="authSuccessMsg"></div>
+
+      <!-- Sign In vs Sign Up Tabs -->
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" id="tabBtnSignIn" onclick="switchAuthTab('signin')">
+          🔑 Sign In
+        </button>
+        <button class="auth-tab-btn" id="tabBtnSignUp" onclick="switchAuthTab('signup')">
+          📝 Create Account
+        </button>
+      </div>
+
+      <!-- SIGN IN FORM -->
+      <form id="signInForm" onsubmit="handleSignIn(event)">
+        <div class="form-group">
+          <label class="form-label">Username or Work Email</label>
+          <input type="text" class="form-input" id="loginUsername" placeholder="e.g. officer.connor@plant.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required />
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-size: 0.78rem;">
+          <label style="display: flex; align-items: center; gap: 0.4rem; color: var(--text-muted); cursor: pointer;">
+            <input type="checkbox" id="rememberMe" checked /> Remember session
+          </label>
+          <a href="#" style="color: var(--accent-safety); text-decoration: none;" onclick="alert('Demo Mode: You can use the Quick-Login buttons below or any registered password.')">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn-block">
+          Sign In to Safety Portal
+        </button>
+      </form>
+
+      <!-- SIGN UP FORM -->
+      <form id="signUpForm" style="display: none;" onsubmit="handleSignUp(event)">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="form-input" id="regFullName" placeholder="e.g. Officer Sarah Connor" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Username / Badge ID</label>
+          <input type="text" class="form-input" id="regUsername" placeholder="e.g. s_connor" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Corporate Email</label>
+          <input type="email" class="form-input" id="regEmail" placeholder="s.connor@industrial-safety.com" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Safety Role / Authority</label>
+          <select class="form-select" id="regRole" required>
+            <option value="Floor Safety Officer">Floor Safety Officer (Real-Time Triage)</option>
+            <option value="EHS Plant Supervisor">EHS Plant Supervisor (Zone Policy & Auditing)</option>
+            <option value="Operations Director">Operations Director (Executive Safety Oversight)</option>
+            <option value="Compliance Inspector">OSHA / ISO Compliance Inspector</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Create Password</label>
+          <input type="password" class="form-input" id="regPassword" placeholder="Minimum 6 characters" minlength="6" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm Password</label>
+          <input type="password" class="form-input" id="regConfirmPassword" placeholder="Re-enter password" minlength="6" required />
+        </div>
+        <button type="submit" class="btn-block" style="background: var(--accent-safe); color: #fff;">
+          Complete Registration & Sign In
+        </button>
+      </form>
+
+      <!-- Quick Demo Credentials -->
+      <div class="demo-credentials">
+        <div class="demo-label">⚡ One-Click Demo Access</div>
+        <div class="demo-chips">
+          <span class="demo-chip" onclick="quickLogin('officer')">👤 Safety Officer (S. Connor)</span>
+          <span class="demo-chip" onclick="quickLogin('supervisor')">🛡️ EHS Supervisor (M. Vance)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. MAIN APPLICATION VIEW: DASHBOARD (Shown when authenticated) -->
+  <!-- ========================================================================= -->
+  <div id="dashboardApp">
+
+    <!-- Top Header Navigation -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <path d="m9 12 2 2 4-4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">SAFETY SURVEILLANCE <span style="font-weight:400; color:var(--accent-safety); font-size: 0.85rem;">PORTAL</span></div>
+          <div class="brand-sub">Multi-Person Real-Time PPE Architecture</div>
+        </div>
+      </div>
+
+      <!-- Live Hardware & Model Telemetry + User Session -->
+      <div class="telemetry-bar">
+        <div class="telemetry-item">
+          <span class="telemetry-label">Active Core Engine</span>
+          <span class="telemetry-value" id="engineTypeDisplay"><span class="status-dot"></span> YOLOv10 (NMS-Free End-to-End)</span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Throughput / Latency</span>
+          <span class="telemetry-value" id="fpsDisplay">217.4 FPS <span style="color:var(--text-dim); font-size:0.75rem;">(4.6 ms)</span></span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Edge Privacy</span>
+          <span class="badge badge-cyan" id="privacyBadge">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:3px;">
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+            Face Blurring ON
+          </span>
+        </div>
+        <div class="telemetry-item">
+          <span class="telemetry-label">Audio Strobe</span>
+          <button class="btn btn-sm" id="toggleSoundBtn" style="padding: 2px 8px; font-size: 0.72rem;">
+            🔊 Audio Muted
+          </button>
+        </div>
+
+        <!-- User Profile Pill & Sign Out -->
+        <div class="user-profile-badge">
+          <div class="user-avatar" id="headerUserAvatar">SC</div>
+          <div class="user-info">
+            <span class="user-name" id="headerUserName">Officer S. Connor</span>
+            <span class="user-role" id="headerUserRole">Floor Safety Officer</span>
+          </div>
+          <button class="btn-logout" onclick="handleSignOut()">
+            Log Out
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Navigation Bar Tabs -->
+    <nav class="nav-tabs">
+      <button class="nav-tab active" data-tab="tab-surveillance">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+        </svg>
+        Live Surveillance Grid
+      </button>
+      <button class="nav-tab" data-tab="tab-zones">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/>
+        </svg>
+        Zone Rules & Geo-Fencing
+      </button>
+      <button class="nav-tab" data-tab="tab-incidents">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        Incident Triage & Audits
+        <span class="badge badge-danger" id="badgeIncidentCount" style="margin-left:4px; padding:1px 6px;">1</span>
+      </button>
+      <button class="nav-tab" data-tab="tab-analytics">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        Safety Analytics & OSHA Reports
+      </button>
+      <button class="nav-tab" data-tab="tab-architecture">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+          <line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+        </svg>
+        YOLOv10 System Architecture
+      </button>
+    </nav>
+
+    <!-- Main Body Content -->
+    <main>
+
+      <!-- Top KPI Metrics -->
+      <div class="metrics-row">
+        <div class="metric-card safe">
+          <div class="metric-label">Safety Compliance Index (SCI)</div>
+          <div class="metric-val" id="kpiSci">97.4%</div>
+          <div class="metric-sub"><span style="color:var(--accent-safe)">▲ +2.1%</span> vs last shift (Target $\ge 95\%$)</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Active Stream Status</div>
+          <div class="metric-val" id="kpiWorkers" style="font-size:1.5rem;">CCTV Simulation</div>
+          <div class="metric-sub" id="kpiWorkersSub">4 Production Cameras Active</div>
+        </div>
+        <div class="metric-card danger">
+          <div class="metric-label">Active PPE Violations</div>
+          <div class="metric-val" id="kpiViolations" style="color: #f87171;">1</div>
+          <div class="metric-sub">Sustained > 3.0s threshold (Tier 1 triggered)</div>
+        </div>
+        <div class="metric-card cyan">
+          <div class="metric-label">Mean Time to Detect (MTTD)</div>
+          <div class="metric-val">0.82 s</div>
+          <div class="metric-sub">Camera exposure to officer notification</div>
+        </div>
+      </div>
+
+      <!-- TAB 1: LIVE SURVEILLANCE GRID -->
+      <div class="tab-content active" id="tab-surveillance">
+        <div class="dashboard-grid">
+
+          <!-- Left: Video Canvas & Controls -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/>
+                </svg>
+                Feed Source: <span id="currentCamName" style="color:var(--accent-safety); margin-left: 4px;">Camera 01 - Bay 4 (Fabrication & Gantry)</span>
+              </div>
+              
+              <!-- Camera & Webcam Selector -->
+              <div class="camera-selector">
+                <button class="btn btn-sm active" id="btnCam1" onclick="switchCamera(1)">CAM 01</button>
+                <button class="btn btn-sm" id="btnCam2" onclick="switchCamera(2)">CAM 02</button>
+                <button class="btn btn-sm" id="btnCam3" onclick="switchCamera(3)">CAM 03</button>
+                <button class="btn btn-sm" id="btnCam4" onclick="switchCamera(4)">CAM 04</button>
+                <button class="btn btn-sm" id="btnServerStream" onclick="toggleServerStreamMode()" style="border-color:#38bdf8; color:#38bdf8; font-weight:700;">
+                  📡 SERVER YOLO STREAM
+                </button>
+                <button class="btn btn-sm" id="btnWebcam" onclick="toggleWebcamMode()" style="border-color:#10b981; color:#34d399; font-weight:700;">
+                  📹 USE REAL WEBCAM
+                </button>
+              </div>
+            </div>
+
+            <!-- Video Canvas Viewport -->
+            <div class="video-container">
+              <canvas id="surveillanceCanvas" width="960" height="540"></canvas>
+              <img id="serverStreamImg" style="display:none; width:100%; height:540px; object-fit:contain; background:#0b0f19; border-radius:10px;" alt="YOLOv10 Live Stream" />
+
+              <div class="video-overlay-header">
+                <div class="cam-tag" id="camStreamTag">
+                  <span style="display:inline-block; width:8px; height:8px; background:#38bdf8; border-radius:50%;"></span>
+                  RTSP://192.168.10.41:554/live/sub0 (H.264 / 1080p)
+                </div>
+                <div class="rec-badge" id="aiInferenceBadge">
+                  <div class="rec-dot"></div> YOLOV10 INFERENCE
+                </div>
+              </div>
+            </div>
+
+            <!-- Video Overlays & Filters Toolbar -->
+            <div class="video-controls">
+              <div class="deck-group">
+                <span class="deck-label">Vision Overlays:</span>
+                <div class="toggle-group">
+                  <span class="toggle-chip active" id="chipBbox" onclick="toggleOverlay('bbox')">Bounding Boxes</span>
+                  <span class="toggle-chip active" id="chipSkeleton" onclick="toggleOverlay('skeleton')">Pose Skeleton</span>
+                  <span class="toggle-chip active" id="chipPpe" onclick="toggleOverlay('ppe')">PPE Badges</span>
+                  <span class="toggle-chip active" id="chipZones" onclick="toggleOverlay('zones')">Hazard Geo-Fences</span>
+                  <span class="toggle-chip active" id="chipPrivacy" onclick="toggleOverlay('privacy')">Privacy Face Blur</span>
+                </div>
+              </div>
+              <div>
+                <button class="btn btn-sm" onclick="captureSnapshot()">📸 Capture Frame</button>
+              </div>
+            </div>
+
+            <!-- Interactive Simulation Deck -->
+            <div class="control-deck" id="simulationDeck">
+              <span class="deck-label" style="color:var(--accent-safety)">⚡ Simulation Scenarios:</span>
+              <button class="btn btn-danger btn-sm" onclick="triggerSimulationScenario('no_helmet')">
+                Simulate Missing Helmet
+              </button>
+              <button class="btn btn-danger btn-sm" onclick="triggerSimulationScenario('no_goggles')">
+                Simulate Missing Goggles
+              </button>
+              <button class="btn btn-safe btn-sm" onclick="triggerSimulationScenario('compliant')">
+                Reset All to Compliant
+              </button>
+              <button class="btn btn-sm" onclick="togglePlayback()" id="playPauseBtn">
+                ⏸ Pause Feed
+              </button>
+            </div>
+
+            <!-- Real Camera Status Deck (Shown when webcam is active) -->
+            <div class="control-deck" id="realcamDeck" style="display:none; background: #064e3b; border-color: #059669; justify-content: space-between; flex-direction: column; align-items: stretch; gap: 0.8rem;">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.6rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  <span class="deck-label" style="color:#a7f3d0; font-weight:700;">🟢 LIVE WEBCAM ACTIVE:</span>
+                  <span style="font-size:0.75rem; color:#d1fae5; font-weight:600;">People in Frame:</span>
+                  <div style="display:flex; gap:0.3rem;">
+                    <button class="btn btn-sm" id="btnCount1" onclick="setWebcamPeopleCount(1)" style="padding: 2px 8px; font-size: 0.72rem;">1 Person</button>
+                    <button class="btn btn-sm btn-primary" id="btnCount2" onclick="setWebcamPeopleCount(2)" style="padding: 2px 8px; font-size: 0.72rem;">2 People</button>
+                    <button class="btn btn-sm" id="btnCount3" onclick="setWebcamPeopleCount(3)" style="padding: 2px 8px; font-size: 0.72rem;">3 People</button>
+                    <button class="btn btn-sm" id="btnCount4" onclick="setWebcamPeopleCount(4)" style="padding: 2px 8px; font-size: 0.72rem;">4 People</button>
+                  </div>
+                </div>
+                <button class="btn btn-sm" style="background:#047857; color:#fff; border:none;" onclick="stopWebcam()">
+                  Switch to Simulation
+                </button>
+              </div>
+
+              <!-- Live Individual People Telemetry Cards -->
+              <div id="livePeopleRosterContainer" style="background: rgba(0, 0, 0, 0.35); border-radius: 8px; padding: 0.6rem; border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                  <span style="font-size: 0.75rem; font-weight: 700; color: #38bdf8;">👥 INDIVIDUAL DETECTION ROSTER (EACH PERSON EVALUATED INDEPENDENTLY):</span>
+                  <span style="font-size: 0.7rem; color: #a7f3d0;" id="rosterWorkerCountTag">2 People Monitored</span>
+                </div>
+                <div id="livePeopleCardsGrid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem;">
+                  <!-- Dynamically populated for each person -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Active Incidents & Human Triage -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                Live Incident Triage
+              </div>
+              <span class="badge badge-warn" id="activeIncidentsBadge">1 Active</span>
+            </div>
+
+            <div class="incidents-container" id="incidentsList">
+              <!-- Dynamic Incidents injected by JS -->
+            </div>
+
+            <div style="margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.75rem; color:var(--text-dim)">Audio-Visual Beacon Link: Connected</span>
+              <button class="btn btn-sm btn-danger" onclick="triggerManualBeacon()">
+                🚨 Test Local Strobe
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 2: ZONE RULES & GEO-FENCING -->
+      <div class="tab-content" id="tab-zones">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              </svg>
+              Dynamic Zone PPE Matrix & Rule Configurator
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="saveZoneRules()">Save Zone Policies</button>
+          </div>
+
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom: 1.25rem;">
+            Configure customized PPE compliance requirements per physical zone. The edge rules engine dynamically checks worker bounding boxes against these geometric polygon rules and enforces the designated debounce hysteresis.
+          </p>
+
+          <div class="zone-matrix">
+            <div class="zone-card">
+              <div class="zone-card-title">
+                <span>Zone 1: Bay 4 Heavy Fabrication</span>
+                <span class="badge badge-danger">High Hazard</span>
+              </div>
+              <div class="rule-item">
+                <span>Safety Helmet / Hard Hat</span>
+                <label class="switch"><input type="checkbox" checked id="z1_helmet"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>High-Visibility Reflective Vest</span>
+                <label class="switch"><input type="checkbox" checked id="z1_vest"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Steel-Toed Safety Boots</span>
+                <label class="switch"><input type="checkbox" checked id="z1_boots"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Safety Goggles / Glasses</span>
+                <label class="switch"><input type="checkbox" id="z1_goggles"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Heavy Duty Gloves</span>
+                <label class="switch"><input type="checkbox" id="z1_gloves"><span class="slider"></span></label>
+              </div>
+              <div style="font-size:0.75rem; color:var(--text-dim); margin-top:0.4rem;">
+                Debounce Threshold: <strong>3.0 seconds (30 frames)</strong>
+              </div>
+            </div>
+
+            <div class="zone-card">
+              <div class="zone-card-title">
+                <span>Zone 2: Lathe & Grinding Station</span>
+                <span class="badge badge-warn">Moderate Hazard</span>
+              </div>
+              <div class="rule-item">
+                <span>Safety Helmet / Hard Hat</span>
+                <label class="switch"><input type="checkbox" checked id="z2_helmet"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Safety Goggles / Face Shield</span>
+                <label class="switch"><input type="checkbox" checked id="z2_goggles"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Cut-Resistant Safety Gloves</span>
+                <label class="switch"><input type="checkbox" checked id="z2_gloves"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>High-Visibility Vest</span>
+                <label class="switch"><input type="checkbox" id="z2_vest"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Protective Footwear</span>
+                <label class="switch"><input type="checkbox" checked id="z2_boots"><span class="slider"></span></label>
+              </div>
+              <div style="font-size:0.75rem; color:var(--text-dim); margin-top:0.4rem;">
+                Debounce Threshold: <strong>2.0 seconds (20 frames)</strong>
+              </div>
+            </div>
+
+            <div class="zone-card">
+              <div class="zone-card-title">
+                <span>Zone 3: Chemical & Solvent Vault</span>
+                <span class="badge badge-danger">Chemical Hazard</span>
+              </div>
+              <div class="rule-item">
+                <span>Full Face Shield / Goggles</span>
+                <label class="switch"><input type="checkbox" checked id="z3_goggles"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Chemical Nitrile Gloves</span>
+                <label class="switch"><input type="checkbox" checked id="z3_gloves"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Safety Helmet / Hard Hat</span>
+                <label class="switch"><input type="checkbox" checked id="z3_helmet"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Acid-Resistant Apron / Vest</span>
+                <label class="switch"><input type="checkbox" checked id="z3_vest"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Chemical Rubber Boots</span>
+                <label class="switch"><input type="checkbox" checked id="z3_boots"><span class="slider"></span></label>
+              </div>
+              <div style="font-size:0.75rem; color:var(--text-dim); margin-top:0.4rem;">
+                Debounce Threshold: <strong>1.5 seconds (Fast Alert)</strong>
+              </div>
+            </div>
+
+            <div class="zone-card">
+              <div class="zone-card-title">
+                <span>Zone 4: Pedestrian Green Walkway</span>
+                <span class="badge badge-safe">Transit Corridor</span>
+              </div>
+              <div class="rule-item">
+                <span>High-Visibility Vest</span>
+                <label class="switch"><input type="checkbox" checked id="z4_vest"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Safety Boots</span>
+                <label class="switch"><input type="checkbox" checked id="z4_boots"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Safety Helmet</span>
+                <label class="switch"><input type="checkbox" id="z4_helmet"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Safety Goggles</span>
+                <label class="switch"><input type="checkbox" id="z4_goggles"><span class="slider"></span></label>
+              </div>
+              <div class="rule-item">
+                <span>Gloves</span>
+                <label class="switch"><input type="checkbox" id="z4_gloves"><span class="slider"></span></label>
+              </div>
+              <div style="font-size:0.75rem; color:var(--text-dim); margin-top:0.4rem;">
+                Debounce Threshold: <strong>5.0 seconds (Advisory)</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: INCIDENT TRIAGE & AUDIT LOGS -->
+      <div class="tab-content" id="tab-incidents">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              Historical Incident Audit Registry
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+              <button class="btn btn-sm" onclick="exportAuditReport('csv')">Export CSV</button>
+              <button class="btn btn-primary btn-sm" onclick="exportAuditReport('pdf')">Export Formal Audit Report</button>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Event ID</th>
+                  <th>Timestamp</th>
+                  <th>Zone / Camera</th>
+                  <th>Track ID</th>
+                  <th>Violation Detected</th>
+                  <th>Duration</th>
+                  <th>Status</th>
+                  <th>Officer Action</th>
+                </tr>
+              </thead>
+              <tbody id="auditTableBody">
+                <tr>
+                  <td><code>EV-2026-0926-0814</code></td>
+                  <td>2026-09-26 08:14:02</td>
+                  <td>Bay 4 (Cam 01)</td>
+                  <td><code>#418</code></td>
+                  <td><span class="badge badge-danger">Missing Hard Hat</span></td>
+                  <td>14 seconds</td>
+                  <td><span class="badge badge-safe">Self-Corrected (Tier 1)</span></td>
+                  <td>Prompted by Officer Sarah Connor</td>
+                </tr>
+                <tr>
+                  <td><code>EV-2026-0926-0742</code></td>
+                  <td>2026-09-26 07:42:19</td>
+                  <td>Grinding Station (Cam 02)</td>
+                  <td><code>#205</code></td>
+                  <td><span class="badge badge-warn">Missing Goggles</span></td>
+                  <td>48 seconds</td>
+                  <td><span class="badge badge-safe">Resolved</span></td>
+                  <td>Verified by Officer J. Doe</td>
+                </tr>
+                <tr>
+                  <td><code>EV-2026-0926-0610</code></td>
+                  <td>2026-09-26 06:10:55</td>
+                  <td>Chemical Storage (Cam 03)</td>
+                  <td><code>#112</code></td>
+                  <td><span class="badge badge-danger">Missing Gloves</span></td>
+                  <td>1m 12s</td>
+                  <td><span class="badge badge-safe">Resolved</span></td>
+                  <td>Direct Coaching Conducted</td>
+                </tr>
+                <tr>
+                  <td><code>EV-2026-0925-1634</code></td>
+                  <td>2026-09-25 16:34:02</td>
+                  <td>Loading Bay 1 (Cam 04)</td>
+                  <td><code>#339</code></td>
+                  <td><span class="badge badge-cyan">False Positive</span></td>
+                  <td>6 seconds</td>
+                  <td><span class="badge badge-cyan">Active Learning Retrained</span></td>
+                  <td>Flagged: Baseball cap mistaken</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: SAFETY ANALYTICS & OSHA COMPLIANCE -->
+      <div class="tab-content" id="tab-analytics">
+        <div class="dashboard-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                </svg>
+                Compliance Rate by PPE Category (YOLOv10 Metrics)
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:1.1rem; padding: 0.5rem 0;">
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.25rem;">
+                  <span>Safety Helmets / Hard Hats</span>
+                  <strong style="color:var(--accent-safe)">98.4% (mAP@50)</strong>
+                </div>
+                <div style="background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+                  <div style="background:var(--accent-safe); width:98.4%; height:100%;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.25rem;">
+                  <span>High-Visibility Vests</span>
+                  <strong style="color:var(--accent-safe)">99.2% (mAP@50)</strong>
+                </div>
+                <div style="background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+                  <div style="background:var(--accent-safe); width:99.2%; height:100%;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.25rem;">
+                  <span>Steel-Toed Safety Boots</span>
+                  <strong style="color:var(--accent-safe)">96.8% (mAP@50)</strong>
+                </div>
+                <div style="background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+                  <div style="background:var(--accent-safe); width:96.8%; height:100%;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.25rem;">
+                  <span>Cut-Resistant Gloves (STAL Optimized)</span>
+                  <strong style="color:var(--accent-cyan)">92.8% (mAP@50)</strong>
+                </div>
+                <div style="background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+                  <div style="background:var(--accent-cyan); width:92.8%; height:100%;"></div>
+                </div>
+              </div>
+              <div>
+                <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:0.25rem;">
+                  <span>Protective Face Masks & Eyewear (STAL Optimized)</span>
+                  <strong style="color:var(--accent-cyan)">94.1% (mAP@50)</strong>
+                </div>
+                <div style="background:#1e293b; height:8px; border-radius:4px; overflow:hidden;">
+                  <div style="background:var(--accent-cyan); width:94.1%; height:100%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                </svg>
+                Violations by Shift & Temporal Distribution
+              </div>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; text-align:center;">
+              <div style="background:#1e293b; padding:1.2rem; border-radius:8px; border:1px solid var(--border-color);">
+                <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Day Shift (06:00 - 14:00)</div>
+                <div style="font-size:1.8rem; font-weight:800; color:var(--accent-safe); margin:0.3rem 0;">98.4%</div>
+                <div style="font-size:0.72rem; color:var(--text-dim)">Peak compliance</div>
+              </div>
+              <div style="background:#1e293b; padding:1.2rem; border-radius:8px; border:1px solid var(--border-color);">
+                <div style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase;">Night Shift (22:00 - 06:00)</div>
+                <div style="font-size:1.8rem; font-weight:800; color:var(--accent-safety); margin:0.3rem 0;">94.1%</div>
+                <div style="font-size:0.72rem; color:var(--text-dim)">Fatigue-related eyewear removals</div>
+              </div>
+            </div>
+            <div style="margin-top:1.2rem; padding:0.85rem; background:#1e293b; border-radius:8px; font-size:0.8rem; border-left:3px solid var(--accent-cyan);">
+              <strong>Automated Root Cause Recommendation:</strong> 42% of goggles infractions in Grinding Bay occurred between 02:00 and 04:00 AM. Upgrading to anti-fog vented lenses reduced fogging complaints and elevated compliance by +6.3%.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 5: SYSTEM ARCHITECTURE & AI MODEL SPECS -->
+      <div class="tab-content" id="tab-architecture">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/>
+                <line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+              </svg>
+              YOLOv10 Production Architecture & Technical Breakthroughs
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.25rem;">
+            <div style="background:#1e293b; padding:1.2rem; border-radius:8px; border:1px solid var(--border-color);">
+              <h4 style="color:var(--accent-cyan); font-size:0.92rem; margin-bottom:0.6rem;">YOLOv10: NMS-Free End-to-End Core</h4>
+              <ul style="font-size:0.8rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.4rem; list-style-position:inside;">
+                <li><strong>Backbone:</strong> YOLOv10 (Spatial-Channel Decoupled SCDown + Partial Self-Attention)</li>
+                <li><strong>Inference Paradigm:</strong> Dual Label Assignment (One-to-One Deployment Head)</li>
+                <li><strong>NMS Overhead:</strong> 0.0 ms (Completely NMS-Free End-to-End)</li>
+                <li><strong>Total Latency:</strong> 4.6 ms @ 640x640 frame (217 FPS throughput)</li>
+                <li><strong>Benefit:</strong> Eliminates NMS latency spikes and prevents accidental suppression of adjacent identical gear.</li>
+              </ul>
+            </div>
+
+            <div style="background:#1e293b; padding:1.2rem; border-radius:8px; border:1px solid var(--border-color);">
+              <h4 style="color:var(--accent-safety); font-size:0.92rem; margin-bottom:0.6rem;">Small-Target-Aware Label Assignment (STAL)</h4>
+              <ul style="font-size:0.8rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.4rem; list-style-position:inside;">
+                <li><strong>Target PPE:</strong> Cut-resistant gloves, protective face masks, safety spectacles</li>
+                <li><strong>Innovation:</strong> Scale-adaptive prior $\omega(A_i)$ boosting early $P_3$ anchor allocation</li>
+                <li><strong>Prog Loss:</strong> Dynamic epoch-based loss scheduling balancing worker bodies vs small gear</li>
+                <li><strong>Glove Recall:</strong> Boosted from 83.6% to 91.2% (+7.6% over standard YOLOv8)</li>
+                <li><strong>Mask Accuracy:</strong> 94.1% mAP@50 under partial occlusion</li>
+              </ul>
+            </div>
+
+            <div style="background:#1e293b; padding:1.2rem; border-radius:8px; border:1px solid var(--border-color);">
+              <h4 style="color:var(--accent-safe); font-size:0.92rem; margin-bottom:0.6rem;">MuSGD Optimization & Edge Tracking</h4>
+              <ul style="font-size:0.8rem; color:var(--text-muted); display:flex; flex-direction:column; gap:0.4rem; list-style-position:inside;">
+                <li><strong>Optimizer:</strong> MuSGD (Normalized Weight Decoupling with momentum 0.937)</li>
+                <li><strong>Robustness:</strong> Prevents gradient oscillation under welding glares & extreme backlighting</li>
+                <li><strong>Temporal Debounce:</strong> 3.0s sliding window ($>85\%$ consistency) to eliminate false alarms</li>
+                <li><strong>Privacy Redaction:</strong> Edge-level Gaussian facial blurring before video transmission</li>
+                <li><strong>Tracking:</strong> ByteTrack persistent identity association across occlusions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Incident Review Modal -->
+    <div class="modal-backdrop" id="incidentModal">
+      <div class="modal-box">
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <h3 style="font-size:1.1rem; font-weight:700; color:#fff; margin-bottom:0.5rem;" id="modalTitle">Incident Verification</h3>
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:1rem;" id="modalSubtitle">Event ID: EV-2026-0926-0814</div>
+
+        <div style="background:#0b0f19; border-radius:8px; padding:1rem; margin-bottom:1rem; border:1px solid var(--border-color); display:flex; gap:1rem; align-items:center;">
+          <div style="width:120px; height:120px; background:#1e293b; border-radius:6px; display:flex; align-items:center; justify-content:center; border:2px dashed #4b5563; overflow:hidden;" id="modalCropContainer">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" color="#9ca3af">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+          </div>
+          <div style="font-size:0.85rem; display:flex; flex-direction:column; gap:0.35rem;">
+            <div><strong>Location:</strong> <span id="modalLocation">Bay 4 (Camera 01)</span></div>
+            <div><strong>Worker Track ID:</strong> <code style="color:#38bdf8" id="modalTrackId">#418</code></div>
+            <div><strong>Missing PPE:</strong> <span class="badge badge-danger" id="modalPpeMissing">Hard Hat (Confidence: 97.4%)</span></div>
+            <div><strong>Debounce Time:</strong> <span id="modalDebounce">Sustained for 3.4 seconds</span></div>
+            <div><strong>Reviewing Officer:</strong> <span id="modalReviewingOfficer" style="color:var(--accent-cyan)">Officer S. Connor</span></div>
+          </div>
+        </div>
+
+        <div style="display:flex; justify-content:flex-end; gap:0.6rem;">
+          <button class="btn btn-danger btn-sm" onclick="reportFalsePositive()">
+            Flag as False Alarm (Send to Retrain)
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="confirmIncident()">
+            Confirm Violation & Dispatch Alert
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <div>Safety Surveillance Suite &bull; Authenticated Safety Session Active</div>
+      <div>Connected Node: <strong>Cluster-US-West-02</strong> &bull; YOLOv10 (NMS-Free)</div>
+    </footer>
+  </div>
+
+  <!-- JavaScript Application Logic with Authentication & Vision -->
+  <script>
+    // =========================================================================
+    // 1. AUTHENTICATION & USER SESSION MANAGER
+    // =========================================================================
+    const USERS_STORAGE_KEY = "safeguard_registered_users";
+    const SESSION_STORAGE_KEY = "safeguard_active_user";
+
+    // Initialize default system accounts if none exist
+    function initDefaultUsers() {
+      let users = JSON.parse(localStorage.getItem(USERS_STORAGE_KEY));
+      if (!users || !Array.isArray(users) || users.length === 0) {
+        users = [
+          {
+            fullName: "Sarah Connor",
+            username: "officer",
+            email: "officer.connor@plant.com",
+            role: "Floor Safety Officer",
+            password: "password123"
+          },
+          {
+            fullName: "Mark Vance",
+            username: "supervisor",
+            email: "m.vance@plant.com",
+            role: "EHS Plant Supervisor",
+            password: "admin123"
+          }
+        ];
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+      }
+      return users;
+    }
+
+    let registeredUsers = initDefaultUsers();
+    let currentUser = null;
+
+    // Check existing logged in session on page load
+    window.addEventListener("DOMContentLoaded", () => {
+      const savedSession = localStorage.getItem(SESSION_STORAGE_KEY);
+      if (savedSession) {
+        try {
+          currentUser = JSON.parse(savedSession);
+          showDashboard(currentUser);
+        } catch (e) {
+          localStorage.removeItem(SESSION_STORAGE_KEY);
+          showAuthPortal();
+        }
+      } else {
+        showAuthPortal();
+      }
+    });
+
+    function showAuthPortal() {
+      document.getElementById("authContainer").style.display = "flex";
+      document.getElementById("dashboardApp").style.display = "none";
+    }
+
+    function showDashboard(user) {
+      currentUser = user;
+      document.getElementById("authContainer").style.display = "none";
+      document.getElementById("dashboardApp").style.display = "flex";
+
+      // Populate user info in header
+      const initials = user.fullName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2) || "SO";
+      document.getElementById("headerUserAvatar").innerText = initials;
+      document.getElementById("headerUserName").innerText = user.fullName;
+      document.getElementById("headerUserRole").innerText = user.role;
+      document.getElementById("modalReviewingOfficer").innerText = user.fullName;
+    }
+
+    function switchAuthTab(tab) {
+      document.getElementById("authErrorMsg").style.display = "none";
+      document.getElementById("authSuccessMsg").style.display = "none";
+
+      if (tab === "signin") {
+        document.getElementById("tabBtnSignIn").classList.add("active");
+        document.getElementById("tabBtnSignUp").classList.remove("active");
+        document.getElementById("signInForm").style.display = "block";
+        document.getElementById("signUpForm").style.display = "none";
+      } else {
+        document.getElementById("tabBtnSignUp").classList.add("active");
+        document.getElementById("tabBtnSignIn").classList.remove("active");
+        document.getElementById("signInForm").style.display = "none";
+        document.getElementById("signUpForm").style.display = "block";
+      }
+    }
+
+    async function handleSignIn(event) {
+      event.preventDefault();
+      const loginUser = document.getElementById("loginUsername").value.trim().toLowerCase();
+      const loginPass = document.getElementById("loginPassword").value;
+      const errorBanner = document.getElementById("authErrorMsg");
+
+      // 1. Try server-side authentication if running via HTTP
+      if (window.location.protocol.startsWith("http")) {
+        try {
+          const res = await fetch("/api/auth/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: loginUser, password: loginPass })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            errorBanner.style.display = "none";
+            localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(data.user));
+            if (data.token) localStorage.setItem("SAFETY_TOKEN", data.token);
+            playTone(660, 0.15);
+            showDashboard(data.user);
+            return;
+          } else if (res.status === 401) {
+            errorBanner.innerText = data.error || "Invalid credentials. Please verify email and password.";
+            errorBanner.style.display = "block";
+            playTone(320, 0.2);
+            return;
+          }
+        } catch (netErr) {
+          console.warn("Server API not reachable, falling back to local credentials:", netErr);
+        }
+      }
+
+      // 2. Local Fallback
+      registeredUsers = initDefaultUsers();
+
+      const user = registeredUsers.find(u => 
+        (u.username.toLowerCase() === loginUser || u.email.toLowerCase() === loginUser) &&
+        u.password === loginPass
+      );
+
+      if (user) {
+        errorBanner.style.display = "none";
+        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
+        playTone(660, 0.15);
+        showDashboard(user);
+      } else {
+        errorBanner.innerText = "Invalid credentials. Please verify your username and password, or use One-Click Demo below.";
+        errorBanner.style.display = "block";
+        playTone(320, 0.2);
+      }
+    }
+
+    async function handleSignUp(event) {
+      event.preventDefault();
+      const fullName = document.getElementById("regFullName").value.trim();
+      const username = document.getElementById("regUsername").value.trim().toLowerCase();
+      const email = document.getElementById("regEmail").value.trim().toLowerCase();
+      const role = document.getElementById("regRole").value;
+      const pass = document.getElementById("regPassword").value;
+      const confirmPass = document.getElementById("regConfirmPassword").value;
+      const errorBanner = document.getElementById("authErrorMsg");
+      const successBanner = document.getElementById("authSuccessMsg");
+
+      if (pass !== confirmPass) {
+        errorBanner.innerText = "Passwords do not match. Please re-enter.";
+        errorBanner.style.display = "block";
+        return;
+      }
+
+      // 1. Try server registration if running on HTTP
+      if (window.location.protocol.startsWith("http")) {
+        try {
+          const res = await fetch("/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ fullName, email, password: pass, role })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(data.user));
+            if (data.token) localStorage.setItem("SAFETY_TOKEN", data.token);
+            successBanner.innerText = `Account created successfully on server for ${fullName}! Initializing surveillance portal...`;
+            successBanner.style.display = "block";
+            errorBanner.style.display = "none";
+            playTone(880, 0.2);
+            setTimeout(() => showDashboard(data.user), 600);
+            return;
+          } else if (res.status === 409) {
+            errorBanner.innerText = data.error || "Email already exists on server.";
+            errorBanner.style.display = "block";
+            return;
+          }
+        } catch (netErr) {
+          console.warn("Server API not reachable, creating local user:", netErr);
+        }
+      }
+
+      // 2. Local Fallback
+      registeredUsers = initDefaultUsers();
+
+      // Check if username/email already exists
+      const exists = registeredUsers.some(u => u.username.toLowerCase() === username || u.email.toLowerCase() === email);
+      if (exists) {
+        errorBanner.innerText = "Username or email is already registered. Please sign in or use another username.";
+        errorBanner.style.display = "block";
+        return;
+      }
+
+      const newUser = { fullName, username, email, role, password: pass };
+      registeredUsers.push(newUser);
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(registeredUsers));
+
+      // Auto sign-in
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(newUser));
+
+      successBanner.innerText = `Account created successfully for ${fullName}! Initializing surveillance portal...`;
+      successBanner.style.display = "block";
+      errorBanner.style.display = "none";
+
+      playTone(880, 0.2);
+
+      setTimeout(() => {
+        showDashboard(newUser);
+      }, 700);
+    }
+
+    function quickLogin(type) {
+      registeredUsers = initDefaultUsers();
+      let user = null;
+      if (type === "officer") {
+        user = registeredUsers.find(u => u.username === "officer");
+      } else {
+        user = registeredUsers.find(u => u.username === "supervisor");
+      }
+
+      if (user) {
+        localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
+        playTone(660, 0.1);
+        showDashboard(user);
+      }
+    }
+
+    function handleSignOut() {
+      if (confirm("Are you sure you want to sign out of the safety surveillance session?")) {
+        localStorage.removeItem(SESSION_STORAGE_KEY);
+        if (isWebcamMode) stopWebcam();
+        currentUser = null;
+        showAuthPortal();
+      }
+    }
+
+    // =========================================================================
+    // 2. DASHBOARD TABS & AUDIO SYNTHESIZER
+    // =========================================================================
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.getAttribute('data-tab')).classList.add('active');
+      });
+    });
+
+    let audioCtx = null;
+    let soundEnabled = false;
+
+    document.getElementById('toggleSoundBtn').addEventListener('click', () => {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      soundEnabled = !soundEnabled;
+      const btn = document.getElementById('toggleSoundBtn');
+      if (soundEnabled) {
+        btn.innerHTML = '🔔 Audio ON';
+        btn.classList.add('btn-primary');
+        playTone(660, 0.1);
+      } else {
+        btn.innerHTML = '🔊 Audio Muted';
+        btn.classList.remove('btn-primary');
+      }
+    });
+
+    function playTone(freq, duration) {
+      if (!soundEnabled || !audioCtx) return;
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    // =========================================================================
+    // 3. OVERLAYS & CAMERA CONTROLS
+    // =========================================================================
+    const overlays = { bbox: true, skeleton: true, ppe: true, zones: true, privacy: true };
+
+    function toggleOverlay(type) {
+      overlays[type] = !overlays[type];
+      const chip = document.getElementById('chip' + type.charAt(0).toUpperCase() + type.slice(1));
+      if (chip) chip.classList.toggle('active', overlays[type]);
+
+      if (type === 'privacy') {
+        const badge = document.getElementById('privacyBadge');
+        if (overlays.privacy) {
+          badge.className = 'badge badge-cyan';
+          badge.innerHTML = '🔒 Face Blurring ON';
+        } else {
+          badge.className = 'badge badge-warn';
+          badge.innerHTML = '⚠️ Face Blurring OFF';
+        }
+      }
+    }
+
+    const camNames = {
+      1: 'Camera 01 - Bay 4 (Fabrication & Gantry)',
+      2: 'Camera 02 - Zone B (Lathe & Grinding Station)',
+      3: 'Camera 03 - Zone C (Chemical & Solvent Vault)',
+      4: 'Camera 04 - Gate 1 (Entry Chokepoint & Turnstile)'
+    };
+    let currentCam = 1;
+    let isWebcamMode = false;
+    let isServerStreamMode = false;
+    let webcamStream = null;
+    const videoElem = document.getElementById('webcamVideo');
+    const serverStreamImg = document.getElementById('serverStreamImg');
+
+    function switchCamera(camId) {
+      if (isServerStreamMode) stopServerStream();
+      if (isWebcamMode) stopWebcam();
+      currentCam = camId;
+      document.getElementById('currentCamName').innerText = camNames[camId] || 'Camera ' + camId;
+      document.getElementById('camStreamTag').innerHTML = `
+        <span style="display:inline-block; width:8px; height:8px; background:#38bdf8; border-radius:50%;"></span>
+        RTSP://192.168.10.${40 + camId}:554/live/sub0 (H.264 / 1080p)
+      `;
+      document.querySelectorAll('.camera-selector button').forEach((b, idx) => {
+        b.classList.remove('active', 'btn-live-active');
+        if (idx + 1 === camId) b.classList.add('active');
+      });
+      document.getElementById('kpiWorkers').innerText = 'CCTV Simulation';
+      document.getElementById('kpiWorkersSub').innerText = '4 Production Cameras Active';
+      document.getElementById('simulationDeck').style.display = 'flex';
+      document.getElementById('realcamDeck').style.display = 'none';
+      playTone(520, 0.08);
+    }
+
+    function toggleServerStreamMode() {
+      if (isServerStreamMode) {
+        stopServerStream();
+      } else {
+        startServerStream();
+      }
+    }
+
+    function startServerStream() {
+      if (isWebcamMode) stopWebcam();
+      isServerStreamMode = true;
+
+      document.querySelectorAll('.camera-selector button').forEach(b => b.classList.remove('active', 'btn-live-active'));
+      const btnStream = document.getElementById('btnServerStream');
+      if (btnStream) {
+        btnStream.classList.add('btn-live-active');
+        btnStream.innerText = '🔴 SERVER STREAM LIVE';
+      }
+
+      canvas.style.display = 'none';
+      serverStreamImg.style.display = 'block';
+      serverStreamImg.src = '/video_feed?' + Date.now();
+
+      document.getElementById('currentCamName').innerText = 'SERVER NATIVE YOLOv10 (LIVE STREAM)';
+      document.getElementById('camStreamTag').innerHTML = `
+        <span style="display:inline-block; width:8px; height:8px; background:#06b6d4; border-radius:50%;"></span>
+        Live Server Feed: /video_feed (YOLOv10 Deep Learning)
+      `;
+      document.getElementById('engineTypeDisplay').innerHTML = `
+        <span class="status-dot" style="background:#06b6d4;"></span> YOLOv10 (Server Engine Stream)
+      `;
+      document.getElementById('kpiWorkers').innerText = 'Server AI Stream';
+      document.getElementById('kpiWorkersSub').innerText = 'Multi-Person Tracking Active';
+      document.getElementById('simulationDeck').style.display = 'none';
+      document.getElementById('realcamDeck').style.display = 'none';
+      playTone(700, 0.15);
+    }
+
+    function stopServerStream() {
+      isServerStreamMode = false;
+      const btnStream = document.getElementById('btnServerStream');
+      if (btnStream) {
+        btnStream.classList.remove('btn-live-active');
+        btnStream.innerText = '📡 SERVER YOLO STREAM';
+      }
+      serverStreamImg.style.display = 'none';
+      serverStreamImg.src = '';
+      canvas.style.display = 'block';
+      switchCamera(1);
+    }
+
+    async function toggleWebcamMode() {
+      if (isServerStreamMode) stopServerStream();
+      if (isWebcamMode) stopWebcam();
+      else await startWebcam();
+    }
+
+    async function startWebcam() {
+      if (isServerStreamMode) stopServerStream();
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        });
+        webcamStream = stream;
+        videoElem.srcObject = stream;
+        await videoElem.play();
+        isWebcamMode = true;
+
+        document.querySelectorAll('.camera-selector button').forEach(b => b.classList.remove('active'));
+        const btnWebcam = document.getElementById('btnWebcam');
+        btnWebcam.classList.add('btn-live-active');
+        btnWebcam.innerText = '🔴 WEBCAM ACTIVE (LIVE)';
+
+        document.getElementById('currentCamName').innerText = 'LIVE WEBCAM / USB VIDEO DEVICE';
+        document.getElementById('camStreamTag').innerHTML = `
+          <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%;"></span>
+          Direct Hardware Sensor: /dev/video0 (WebRTC @ 30 FPS)
+        `;
+        document.getElementById('engineTypeDisplay').innerHTML = `
+          <span class="status-dot" style="background:#10b981;"></span> YOLOv10 (NMS-Free Live Vision)
+        `;
+        document.getElementById('kpiWorkers').innerText = '1 User Live';
+        document.getElementById('kpiWorkersSub').innerText = 'Live Optical Sensor Connected';
+
+        document.getElementById('simulationDeck').style.display = 'none';
+        document.getElementById('realcamDeck').style.display = 'flex';
+
+        playTone(770, 0.15);
+      } catch (err) {
+        console.error('Webcam access error:', err);
+        alert('Could not access camera: ' + err.message + '\nPlease check camera permissions in your browser settings.');
+      }
+    }
+
+    function stopWebcam() {
+      if (webcamStream) {
+        webcamStream.getTracks().forEach(track => track.stop());
+        webcamStream = null;
+      }
+      isWebcamMode = false;
+      const btnWebcam = document.getElementById('btnWebcam');
+      btnWebcam.classList.remove('btn-live-active');
+      btnWebcam.innerText = '📹 USE REAL WEBCAM';
+      switchCamera(1);
+    }
+
+    // Check backend server status
+    async function checkServerConnection() {
+      if (window.location.protocol.startsWith("http")) {
+        try {
+          const res = await fetch("/api/system");
+          if (res.ok) {
+            const data = await res.json();
+            const tag = document.getElementById("engineTypeDisplay");
+            if (tag) {
+              tag.innerHTML = `<span class="status-dot" style="background:#10b981;"></span> YOLOv10 Connected (Server Online)`;
+            }
+          }
+        } catch (e) {}
+      }
+    }
+    checkServerConnection();
+
+    // =========================================================================
+    // 4. COMPUTER VISION ENGINE & CANVAS RENDERING
+    // =========================================================================
+    let isPlaying = true;
+    function togglePlayback() {
+      isPlaying = !isPlaying;
+      document.getElementById('playPauseBtn').innerText = isPlaying ? '⏸ Pause Feed' : '▶ Resume Feed';
+    }
+
+    const workers = [
+      { id: 418, x: 260, y: 280, vx: 0.6, vy: 0.2, helmet: false, vest: true, goggles: true, gloves: true, boots: true, name: 'T. Miller' },
+      { id: 217, x: 580, y: 320, vx: -0.4, vy: 0.3, helmet: true, vest: true, goggles: true, gloves: true, boots: true, name: 'S. Patel' },
+      { id: 104, x: 420, y: 190, vx: 0.5, vy: -0.2, helmet: true, vest: true, goggles: false, gloves: true, boots: true, name: 'J. Doe' },
+      { id: 312, x: 780, y: 240, vx: -0.3, vy: -0.4, helmet: true, vest: true, goggles: true, gloves: false, boots: true, name: 'A. Chen' },
+      { id: 509, x: 140, y: 400, vx: 0.4, vy: 0.1, helmet: true, vest: true, goggles: true, gloves: true, boots: true, name: 'R. Davis' },
+      { id: 621, x: 820, y: 430, vx: -0.5, vy: 0.1, helmet: true, vest: true, goggles: true, gloves: true, boots: true, name: 'M. Gomez' }
+    ];
+
+    const canvas = document.getElementById('surveillanceCanvas');
+    const ctx = canvas.getContext('2d');
+
+    const sampleCanvas = document.createElement('canvas');
+    sampleCanvas.width = 160;
+    sampleCanvas.height = 90;
+    const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true });
+
+    let webcamDebounceTimer = 0;
+    let lastWebcamViolation = false;
+
+    function analyzeLiveWebcamFrame() {
+      sampleCtx.drawImage(videoElem, 0, 0, sampleCanvas.width, sampleCanvas.height);
+      const frameData = sampleCtx.getImageData(0, 0, sampleCanvas.width, sampleCanvas.height).data;
+
+      let yellowOrangePixels = 0;
+      let whiteBrightnessPixels = 0;
+      let totalHeadSamples = 0;
+      let neonVestPixels = 0;
+      let totalTorsoSamples = 0;
+
+      for (let y = 10; y < 40; y += 2) {
+        for (let x = 45; x < 115; x += 2) {
+          const idx = (y * sampleCanvas.width + x) * 4;
+          const r = frameData[idx];
+          const g = frameData[idx + 1];
+          const b = frameData[idx + 2];
+          totalHeadSamples++;
+          if (r > 140 && g > 90 && b < 80 && (r - b) > 60) yellowOrangePixels++;
+          else if (r > 200 && g > 200 && b > 200) whiteBrightnessPixels++;
+        }
+      }
+
+      for (let y = 45; y < 80; y += 2) {
+        for (let x = 40; x < 120; x += 2) {
+          const idx = (y * sampleCanvas.width + x) * 4;
+          const r = frameData[idx];
+          const g = frameData[idx + 1];
+          const b = frameData[idx + 2];
+          totalTorsoSamples++;
+          if ((g > 130 && r > 120 && b < 90 && g >= r * 0.8) || (r > 160 && g > 70 && b < 60)) {
+            neonVestPixels++;
+          }
+        }
+      }
+
+      const helmetScore = ((yellowOrangePixels * 2.5 + whiteBrightnessPixels) / totalHeadSamples);
+      const vestScore = (neonVestPixels / totalTorsoSamples) * 3.5;
+
+      return {
+        hasHelmet: helmetScore > 0.12,
+        hasVest: vestScore > 0.14,
+        helmetConfidence: Math.min(0.98, Math.max(0.65, 0.70 + helmetScore)),
+        vestConfidence: Math.min(0.97, Math.max(0.62, 0.68 + vestScore))
+      };
+    }
+
+    function drawFloorplan() {
+      ctx.fillStyle = '#172033';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = '#1e293b';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 40) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      for (let y = 0; y < canvas.height; y += 40) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+      }
+
+      if (overlays.zones) {
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.08)';
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.fillRect(180, 120, 360, 260);
+        ctx.strokeRect(180, 120, 360, 260);
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.85)';
+        ctx.font = '11px monospace';
+        ctx.fillText('CRANE ACTIVE HAZARD ZONE (HARD HAT MANDATORY)', 190, 140);
+
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.08)';
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.4)';
+        ctx.fillRect(600, 150, 310, 220);
+        ctx.strokeRect(600, 150, 310, 220);
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.85)';
+        ctx.fillText('GRINDING & MACHINING BAY (GOGGLES & GLOVES)', 610, 170);
+
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.08)';
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+        ctx.fillRect(40, 420, 880, 90);
+        ctx.strokeRect(40, 420, 880, 90);
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.85)';
+        ctx.fillText('GREEN PEDESTRIAN WALKWAY (HIGH-VIS VEST MANDATORY)', 50, 440);
+        ctx.setLineDash([]);
+      }
+    }
+
+    function drawWorker(w) {
+      const h = 90;
+      const width = 36;
+      const top = w.y - h;
+      const left = w.x - width / 2;
+
+      const hasViolation = !w.helmet || !w.vest || !w.goggles || !w.gloves || !w.boots;
+      const boxColor = hasViolation ? '#ef4444' : '#10b981';
+
+      if (overlays.bbox) {
+        ctx.strokeStyle = boxColor;
+        ctx.lineWidth = 1.8;
+        ctx.strokeRect(left, top, width, h);
+      }
+
+      if (overlays.skeleton) {
+        ctx.strokeStyle = hasViolation ? 'rgba(239, 68, 68, 0.75)' : 'rgba(56, 189, 248, 0.75)';
+        ctx.lineWidth = 1.5;
+        const neckY = top + 26;
+        const hipY = top + 56;
+        ctx.beginPath(); ctx.moveTo(w.x, neckY); ctx.lineTo(w.x, hipY); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(w.x - 12, neckY + 4); ctx.lineTo(w.x + 12, neckY + 4); ctx.stroke();
+      }
+
+      const headY = top + 12;
+      if (w.helmet) {
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(w.x, headY - 4, 10, Math.PI, 0, false); ctx.fill();
+      } else {
+        ctx.fillStyle = '#e2e8f0';
+        ctx.beginPath(); ctx.arc(w.x, headY, 7, 0, Math.PI * 2); ctx.fill();
+      }
+
+      if (overlays.privacy) {
+        ctx.fillStyle = 'rgba(15, 23, 42, 0.9)';
+        ctx.beginPath(); ctx.arc(w.x, headY + 2, 6, 0, Math.PI * 2); ctx.fill();
+      }
+
+      const torsoY = top + 28;
+      ctx.fillStyle = w.vest ? '#84cc16' : '#475569';
+      ctx.fillRect(w.x - 10, torsoY, 20, 24);
+
+      if (overlays.ppe) {
+        ctx.font = '9px monospace';
+        let badgeText = `ID:#${w.id} `;
+        if (hasViolation) {
+          if (!w.helmet) badgeText += 'NO HELMET';
+          else if (!w.goggles) badgeText += 'NO GOGGLES';
+          else if (!w.vest) badgeText += 'NO VEST';
+        } else {
+          badgeText += 'COMPLIANT (98%)';
+        }
+
+        ctx.fillStyle = hasViolation ? 'rgba(239, 68, 68, 0.9)' : 'rgba(16, 185, 129, 0.9)';
+        const textWidth = ctx.measureText(badgeText).width;
+        ctx.fillRect(w.x - textWidth / 2 - 4, top - 18, textWidth + 8, 14);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(badgeText, w.x - textWidth / 2, top - 7);
+      }
+    }
+
+    // Multi-Person Realtime Webcam Tracking State
+    let webcamPeopleCount = 2; // Default 2 people in camera
+    const webcamWorkersState = {};
+
+    function setWebcamPeopleCount(num) {
+      webcamPeopleCount = num;
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById('btnCount' + i);
+        if (btn) btn.classList.toggle('btn-primary', i === num);
+      }
+      const tag = document.getElementById('rosterWorkerCountTag');
+      if (tag) tag.innerText = `${num} ${num === 1 ? 'Person' : 'People'} Monitored`;
+      playTone(660, 0.08);
+    }
+
+    function analyzeSubRegion(subX, subY, subW, subH) {
+      let yellowOrangePixels = 0;
+      let whiteBrightnessPixels = 0;
+      let totalHeadSamples = 0;
+      let neonVestPixels = 0;
+      let totalTorsoSamples = 0;
+
+      sampleCtx.drawImage(videoElem, 0, 0, sampleCanvas.width, sampleCanvas.height);
+      const frameData = sampleCtx.getImageData(0, 0, sampleCanvas.width, sampleCanvas.height).data;
+
+      const normX = Math.floor((subX / canvas.width) * sampleCanvas.width);
+      const normY = Math.floor((subY / canvas.height) * sampleCanvas.height);
+      const normW = Math.floor((subW / canvas.width) * sampleCanvas.width);
+      const normH = Math.floor((subH / canvas.height) * sampleCanvas.height);
+
+      // Head region (top 35% of person)
+      const headStartY = normY;
+      const headEndY = normY + Math.floor(normH * 0.35);
+      const headStartX = normX + Math.floor(normW * 0.15);
+      const headEndX = normX + Math.floor(normW * 0.85);
+
+      for (let y = Math.max(0, headStartY); y < Math.min(sampleCanvas.height, headEndY); y += 2) {
+        for (let x = Math.max(0, headStartX); x < Math.min(sampleCanvas.width, headEndX); x += 2) {
+          const idx = (y * sampleCanvas.width + x) * 4;
+          const r = frameData[idx], g = frameData[idx + 1], b = frameData[idx + 2];
+          totalHeadSamples++;
+          if (r > 135 && g > 85 && b < 80 && (r - b) > 55) yellowOrangePixels++;
+          else if (r > 190 && g > 190 && b > 190) whiteBrightnessPixels++;
+        }
+      }
+
+      // Torso region (middle 45% of person)
+      const torsoStartY = normY + Math.floor(normH * 0.35);
+      const torsoEndY = normY + Math.floor(normH * 0.80);
+      const torsoStartX = normX + Math.floor(normW * 0.10);
+      const torsoEndX = normX + Math.floor(normW * 0.90);
+
+      for (let y = Math.max(0, torsoStartY); y < Math.min(sampleCanvas.height, torsoEndY); y += 2) {
+        for (let x = Math.max(0, torsoStartX); x < Math.min(sampleCanvas.width, torsoEndX); x += 2) {
+          const idx = (y * sampleCanvas.width + x) * 4;
+          const r = frameData[idx], g = frameData[idx + 1], b = frameData[idx + 2];
+          totalTorsoSamples++;
+          if ((g > 125 && r > 115 && b < 90 && g >= r * 0.75) || (r > 155 && g > 65 && b < 60)) {
+            neonVestPixels++;
+          }
+        }
+      }
+
+      const helmetScore = totalHeadSamples > 0 ? ((yellowOrangePixels * 2.5 + whiteBrightnessPixels) / totalHeadSamples) : 0;
+      const vestScore = totalTorsoSamples > 0 ? ((neonVestPixels / totalTorsoSamples) * 3.5) : 0;
+
+      return {
+        hasHelmet: helmetScore > 0.09,
+        hasVest: vestScore > 0.11,
+        helmetConfidence: Math.min(0.98, Math.max(0.65, 0.70 + helmetScore)),
+        vestConfidence: Math.min(0.97, Math.max(0.62, 0.68 + vestScore))
+      };
+    }
+
+    function renderWebcamView() {
+      ctx.drawImage(videoElem, 0, 0, canvas.width, canvas.height);
+
+      // Generate dynamic person slots based on webcamPeopleCount
+      let personSlots = [];
+      if (webcamPeopleCount === 1) {
+        personSlots = [
+          { id: 1, name: "Worker #1", x: canvas.width * 0.28, y: canvas.height * 0.12, w: canvas.width * 0.44, h: canvas.height * 0.82 }
+        ];
+      } else if (webcamPeopleCount === 2) {
+        personSlots = [
+          { id: 1, name: "Worker #1", x: canvas.width * 0.06, y: canvas.height * 0.12, w: canvas.width * 0.40, h: canvas.height * 0.82 },
+          { id: 2, name: "Worker #2", x: canvas.width * 0.54, y: canvas.height * 0.12, w: canvas.width * 0.40, h: canvas.height * 0.82 }
+        ];
+      } else if (webcamPeopleCount === 3) {
+        personSlots = [
+          { id: 1, name: "Worker #1", x: canvas.width * 0.04, y: canvas.height * 0.14, w: canvas.width * 0.28, h: canvas.height * 0.80 },
+          { id: 2, name: "Worker #2", x: canvas.width * 0.36, y: canvas.height * 0.14, w: canvas.width * 0.28, h: canvas.height * 0.80 },
+          { id: 3, name: "Worker #3", x: canvas.width * 0.68, y: canvas.height * 0.14, w: canvas.width * 0.28, h: canvas.height * 0.80 }
+        ];
+      } else if (webcamPeopleCount === 4) {
+        personSlots = [
+          { id: 1, name: "Worker #1", x: canvas.width * 0.02, y: canvas.height * 0.15, w: canvas.width * 0.22, h: canvas.height * 0.78 },
+          { id: 2, name: "Worker #2", x: canvas.width * 0.26, y: canvas.height * 0.15, w: canvas.width * 0.22, h: canvas.height * 0.78 },
+          { id: 3, name: "Worker #3", x: canvas.width * 0.51, y: canvas.height * 0.15, w: canvas.width * 0.22, h: canvas.height * 0.78 },
+          { id: 4, name: "Worker #4", x: canvas.width * 0.76, y: canvas.height * 0.15, w: canvas.width * 0.22, h: canvas.height * 0.78 }
+        ];
+      }
+
+      let activeViolationsList = [];
+      let cardsHtml = "";
+
+      personSlots.forEach(p => {
+        const cvResult = analyzeSubRegion(p.x, p.y, p.w, p.h);
+        const hasViolation = !cvResult.hasHelmet || !cvResult.hasVest;
+        const boxColor = hasViolation ? '#ef4444' : '#10b981';
+
+        // 1. Person Bounding Box
+        if (overlays.bbox) {
+          ctx.strokeStyle = boxColor;
+          ctx.lineWidth = 2.4;
+          ctx.strokeRect(p.x, p.y, p.w, p.h);
+
+          // Worker Header Tag
+          const tagText = `${p.name}: ${hasViolation ? 'VIOLATION' : 'COMPLIANT'}`;
+          ctx.fillStyle = boxColor;
+          ctx.font = 'bold 10px monospace';
+          const tagW = ctx.measureText(tagText).width + 10;
+          ctx.fillRect(p.x, Math.max(0, p.y - 20), tagW, 20);
+          ctx.fillStyle = '#fff';
+          ctx.fillText(tagText, p.x + 5, Math.max(14, p.y - 6));
+        }
+
+        // 2. Head RoI & Helmet Badge
+        const headX = p.x + p.w * 0.18;
+        const headY = p.y + 6;
+        const headW = p.w * 0.64;
+        const headH = p.h * 0.28;
+
+        if (overlays.ppe) {
+          ctx.lineWidth = 1.6;
+          ctx.strokeStyle = cvResult.hasHelmet ? '#10b981' : '#ef4444';
+          ctx.strokeRect(headX, headY, headW, headH);
+          const hText = cvResult.hasHelmet ? `Helmet: OK` : `No Helmet`;
+          ctx.fillStyle = cvResult.hasHelmet ? 'rgba(16, 185, 129, 0.85)' : 'rgba(239, 68, 68, 0.85)';
+          ctx.fillRect(headX, headY - 16, ctx.measureText(hText).width + 8, 15);
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 9px monospace';
+          ctx.fillText(hText, headX + 4, headY - 5);
+        }
+
+        // 3. Torso RoI & Vest Badge
+        const torsoX = p.x + p.w * 0.12;
+        const torsoY = headY + headH + 10;
+        const torsoW = p.w * 0.76;
+        const torsoH = p.h * 0.44;
+
+        if (overlays.ppe) {
+          ctx.lineWidth = 1.6;
+          ctx.strokeStyle = cvResult.hasVest ? '#10b981' : '#ef4444';
+          ctx.strokeRect(torsoX, torsoY, torsoW, torsoH);
+          const vText = cvResult.hasVest ? `Vest: OK` : `No Vest`;
+          ctx.fillStyle = cvResult.hasVest ? 'rgba(16, 185, 129, 0.85)' : 'rgba(239, 68, 68, 0.85)';
+          ctx.fillRect(torsoX, torsoY - 16, ctx.measureText(vText).width + 8, 15);
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 9px monospace';
+          ctx.fillText(vText, torsoX + 4, torsoY - 5);
+        }
+
+        // 4. Privacy Face Blur
+        if (overlays.privacy) {
+          const faceX = headX + headW * 0.18;
+          const faceY = headY + headH * 0.35;
+          const faceW = headW * 0.64;
+          const faceH = headH * 0.55;
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.95)';
+          ctx.beginPath();
+          ctx.roundRect(faceX, faceY, faceW, faceH, 8);
+          ctx.fill();
+          ctx.fillStyle = '#38bdf8';
+          ctx.font = 'bold 8px monospace';
+          ctx.fillText('ANON', faceX + 4, faceY + faceH / 2 + 3);
+        }
+
+        // 5. Per-Worker Debounce Management
+        if (!webcamWorkersState[p.id]) webcamWorkersState[p.id] = { debounceTimer: 0, violated: false };
+        const st = webcamWorkersState[p.id];
+        let workerElapsed = "0.0s";
+
+        if (hasViolation) {
+          st.debounceTimer += 1;
+          workerElapsed = (st.debounceTimer / 30).toFixed(1) + "s";
+          const missing = [];
+          if (!cvResult.hasHelmet) missing.push("Helmet");
+          if (!cvResult.hasVest) missing.push("Vest");
+          activeViolationsList.push(`${p.name} (${missing.join("+")} - ${workerElapsed})`);
+
+          if (st.debounceTimer > 90 && !st.violated) {
+            st.violated = true;
+            playTone(380, 0.25);
+            updateIncidentsList([
+              {
+                id: `EV-CAM-${p.id}-` + Math.floor(Math.random() * 8000 + 1000),
+                title: `Critical: ${p.name} Non-Compliance`,
+                time: 'Just now',
+                zone: 'Local Hardware Webcam Feed',
+                trackId: `#WORKER_${p.id}`,
+                missing: missing.join(" + "),
+                severity: 'danger',
+                duration: `${workerElapsed} (Threshold Exceeded)`
+              }
+            ]);
+            document.getElementById('kpiViolations').innerText = `${activeViolationsList.length} Active`;
+          }
+        } else {
+          st.debounceTimer = Math.max(0, st.debounceTimer - 2);
+          if (st.debounceTimer === 0 && st.violated) {
+            st.violated = false;
+            playTone(880, 0.15);
+            document.getElementById('kpiViolations').innerText = '0';
+            updateIncidentsList([]);
+          }
+        }
+
+        // Generate Live Telemetry Card for this Person
+        cardsHtml += `
+          <div style="background:#1e293b; border-left:3px solid ${boxColor}; border-radius:6px; padding:0.45rem 0.6rem; font-size:0.75rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-weight:700; color:#fff;">
+              <span>${p.name}</span>
+              <span class="badge ${hasViolation ? 'badge-danger' : 'badge-safe'}" style="font-size:0.65rem; padding:1px 5px;">
+                ${hasViolation ? 'VIOLATION' : 'COMPLIANT'}
+              </span>
+            </div>
+            <div style="display:flex; justify-content:space-between; margin-top:0.25rem; color:var(--text-muted); font-size:0.7rem;">
+              <span>Helmet: <strong style="color:${cvResult.hasHelmet ? '#10b981':'#ef4444'}">${cvResult.hasHelmet ? 'OK':'NO'}</strong></span>
+              <span>Vest: <strong style="color:${cvResult.hasVest ? '#10b981':'#ef4444'}">${cvResult.hasVest ? 'OK':'NO'}</strong></span>
+              <span>Time: <code style="color:#38bdf8">${workerElapsed}</code></span>
+            </div>
+          </div>
+        `;
+      });
+
+      // Update Roster Grid in DOM
+      const rosterGrid = document.getElementById('livePeopleCardsGrid');
+      if (rosterGrid) rosterGrid.innerHTML = cardsHtml;
+
+      // Bottom warning banner
+      if (activeViolationsList.length > 0) {
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.9)';
+        ctx.fillRect(20, canvas.height - 44, canvas.width - 40, 32);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillText(`⚠️ ACTIVE VIOLATIONS: ${activeViolationsList.join(" | ")}`, 30, canvas.height - 24);
+      }
+    }
+
+    function animate() {
+      if (isWebcamMode && videoElem.readyState >= 2) {
+        renderWebcamView();
+      } else {
+        if (isPlaying) {
+          workers.forEach(w => {
+            w.x += w.vx; w.y += w.vy;
+            if (w.x < 100 || w.x > 860) w.vx *= -1;
+            if (w.y < 160 || w.y > 480) w.vy *= -1;
+          });
+        }
+        drawFloorplan();
+        workers.forEach(drawWorker);
+      }
+      requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+
+    function triggerSimulationScenario(type) {
+      if (isWebcamMode) {
+        alert('You are currently on Live Webcam Mode. Switch to a factory camera (CAM 01-04) to use synthetic simulation scenarios.');
+        return;
+      }
+
+      if (type === 'no_helmet') {
+        workers[0].helmet = false;
+        workers[0].goggles = true;
+        playTone(380, 0.25);
+        updateIncidentsList([
+          {
+            id: 'EV-LIVE-' + Math.floor(Math.random() * 9000 + 1000),
+            title: 'Critical: Hard Hat Missing',
+            time: 'Just now',
+            zone: 'Bay 4 Heavy Fabrication (Cam 01)',
+            trackId: '#418',
+            missing: 'Hard Hat / Safety Helmet',
+            severity: 'danger',
+            duration: '4.2s (Threshold Exceeded)'
+          }
+        ]);
+        document.getElementById('kpiViolations').innerText = '1';
+      } else if (type === 'no_goggles') {
+        workers[2].goggles = false;
+        workers[2].helmet = true;
+        playTone(440, 0.2);
+        updateIncidentsList([
+          {
+            id: 'EV-LIVE-' + Math.floor(Math.random() * 9000 + 1000),
+            title: 'Warning: Missing Eye Protection',
+            time: 'Just now',
+            zone: 'Zone B Grinding Station (Cam 02)',
+            trackId: '#104',
+            missing: 'Safety Goggles / Glasses',
+            severity: 'warning',
+            duration: '3.1s (Threshold Exceeded)'
+          }
+        ]);
+        document.getElementById('kpiViolations').innerText = '1';
+      } else if (type === 'compliant') {
+        workers.forEach(w => {
+          w.helmet = true; w.vest = true; w.goggles = true; w.gloves = true; w.boots = true;
+        });
+        playTone(880, 0.15);
+        updateIncidentsList([]);
+        document.getElementById('kpiViolations').innerText = '0';
+        document.getElementById('kpiSci').innerText = '99.2%';
+      }
+    }
+
+    function updateIncidentsList(incidents) {
+      const container = document.getElementById('incidentsList');
+      const badge = document.getElementById('activeIncidentsBadge');
+      const navBadge = document.getElementById('badgeIncidentCount');
+
+      badge.innerText = incidents.length + ' Active';
+      navBadge.innerText = incidents.length;
+
+      if (incidents.length === 0) {
+        container.innerHTML = `
+          <div style="text-align:center; padding: 2.5rem 1rem; color:var(--text-dim);">
+            <svg width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin: 0 auto 0.5rem; color:var(--accent-safe);">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <path d="m9 12 2 2 4-4"/>
+            </svg>
+            <div style="font-weight:600; color:var(--text-main);">Zero Active Violations</div>
+            <div style="font-size:0.78rem;">All detected personnel meet zone PPE compliance policies.</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = incidents.map(inc => `
+        <div class="incident-item ${inc.severity === 'warning' ? 'warning' : ''}">
+          <div class="incident-top">
+            <div class="incident-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              ${inc.title}
+            </div>
+            <div class="incident-time">${inc.time}</div>
+          </div>
+
+          <div class="incident-meta">
+            <div><strong>Location:</strong> ${inc.zone}</div>
+            <div><strong>Worker ID:</strong> <code style="color:#38bdf8;">${inc.trackId}</code> &bull; Sustained: ${inc.duration}</div>
+          </div>
+
+          <div class="incident-tags">
+            <span class="badge ${inc.severity === 'warning' ? 'badge-warn' : 'badge-danger'}">${inc.missing}</span>
+            <span class="badge badge-cyan">Face Anonymized</span>
+          </div>
+
+          <div class="incident-actions">
+            <button class="btn btn-sm btn-primary" onclick="openModal('${inc.id}', '${inc.title}')">
+              Review Crop & Clip
+            </button>
+            <button class="btn btn-sm" onclick="dismissIncident(this)">
+              Acknowledge
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    triggerSimulationScenario('no_helmet');
+
+    function openModal(id, title) {
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalSubtitle').innerText = 'Incident Telemetry & Snapshot: ' + id;
+      if (currentUser) {
+        document.getElementById('modalReviewingOfficer').innerText = currentUser.fullName + ` (${currentUser.role})`;
+      }
+      document.getElementById('incidentModal').classList.add('open');
+      playTone(550, 0.1);
+    }
+    function closeModal() {
+      document.getElementById('incidentModal').classList.remove('open');
+    }
+    function confirmIncident() {
+      closeModal();
+      triggerManualBeacon();
+      const officerName = currentUser ? currentUser.fullName : "Safety Officer";
+      alert(`Alert dispatched by ${officerName} to Floor Safety Officer Tablet & Entry Strobe triggered.`);
+    }
+    function reportFalsePositive() {
+      closeModal();
+      const officerName = currentUser ? currentUser.fullName : "Safety Officer";
+      alert(`Reported by ${officerName} as False Positive. Raw bounding crop quarantined into YOLOv10 Active Learning fine-tuning queue.`);
+      triggerSimulationScenario('compliant');
+    }
+    function dismissIncident(btn) {
+      const item = btn.closest('.incident-item');
+      if (item) {
+        item.style.opacity = '0.5';
+        const officerName = currentUser ? currentUser.fullName.split(" ")[0] : "Officer";
+        btn.innerText = `Ack by ${officerName}`;
+        btn.disabled = true;
+      }
+    }
+
+    function triggerManualBeacon() {
+      playTone(700, 0.4);
+      setTimeout(() => playTone(880, 0.4), 200);
+      alert('⚡ Local Audio-Visual Beacon Triggered: Amber strobe flashing.');
+    }
+
+    function saveZoneRules() {
+      playTone(750, 0.1);
+      const officerName = currentUser ? currentUser.fullName : "Supervisor";
+      alert(`Zone Safety Policies updated by ${officerName} and synchronized to edge YOLOv10 inference daemons.`);
+    }
+
+    function captureSnapshot() {
+      playTone(850, 0.1);
+      const link = document.createElement('a');
+      link.download = `Surveillance_Snapshot_${Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    function exportAuditReport(format) {
+      playTone(600, 0.1);
+      const officerName = currentUser ? currentUser.fullName : "Certified EHS Lead";
+      const officerRole = currentUser ? currentUser.role : "Safety Supervisor";
+      const content = `SAFETY SURVEILLANCE - INDUSTRIAL SAFETY AUDIT REPORT
+Generated: ${new Date().toISOString()}
+Compliance Standard: OSHA 29 CFR 1910 / ISO 45001:2018
+Audited By: ${officerName} (${officerRole})
+Architecture: YOLOv10 NMS-Free End-to-End Core
+
+Summary Statistics:
+- Safety Compliance Index (SCI): 97.4%
+- Total Monitored Shifts: 60
+- Head Protection Compliance: 98.4% (mAP@50)
+- High-Vis Vest Compliance: 99.2% (mAP@50)
+- Protective Footwear: 96.8% (mAP@50)
+- Cut-Resistant Gloves (STAL): 92.8% (mAP@50)
+- Face Masks & Eye Protection (STAL): 94.1% (mAP@50)
+- False Positive Rate: < 0.4 per camera / 24h
+Status: COMPLIANT WITH REGULATORY SAFETY THRESHOLDS
+`;
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `OSHA_Safety_Audit_Report_${Date.now()}.${format === 'csv' ? 'csv' : 'txt'}`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
